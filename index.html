@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wonderbox</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --card: #1e1e24;
+    --accent: #f0c040;
+    --accent2: #e05a5a;
+    --accent3: #5abecc;
+    --text: #e8e8ee;
+    --muted: #888899;
+    --border: #2a2a34;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative;
+    text-align: center;
+    padding: 80px 24px 60px;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 10vw, 110px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .header-title span { color: var(--accent); font-style: italic; }
+
+  .header-subtitle {
+    margin-top: 24px;
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 440px;
+    margin-inline: auto;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .nav-dots {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .nav-dots a {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-dots a:hover { color: var(--accent); }
+
+  /* ─── SECTION BASE ─── */
+  section {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 0 24px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    margin-bottom: 32px;
+    line-height: 1.15;
+  }
+
+  /* ─── HERO IMAGE ─── */
+  .hero-image-wrap {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .hero-image-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240,192,64,0.12), rgba(90,190,204,0.08));
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-image-wrap img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.8) contrast(1.05);
+    transition: filter 0.5s, transform 0.6s;
+  }
+
+  .hero-image-wrap:hover img {
+    filter: saturate(1) contrast(1);
+    transform: scale(1.015);
+  }
+
+  .hero-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 40px 32px 24px;
+    background: linear-gradient(to top, rgba(13,13,15,0.95), transparent);
+    z-index: 2;
+  }
+
+  .hero-caption h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-style: italic;
+  }
+
+  .hero-caption p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── MESSAGE BOX ─── */
+  .message-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .message-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), var(--accent3));
+  }
+
+  .message-card textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 16px;
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .message-card textarea:focus { border-color: var(--accent); }
+
+  .message-card textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    color: #0d0d0f;
+    border: none;
+    border-radius: 3px;
+    padding: 12px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .send-btn:hover { background: #f7d060; }
+  .send-btn:active { transform: scale(0.97); }
+
+  .response-box {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 3px 3px 0;
+    display: none;
+    animation: fadeUp 0.4s forwards;
+  }
+
+  .response-box.visible { display: block; }
+
+  .response-box .resp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 8px;
+  }
+
+  /* ─── GAMES ─── */
+  .games-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 600px) { .games-grid { grid-template-columns: 1fr; } }
+
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::after {
+    content: attr(data-emoji);
+    position: absolute;
+    top: -10px; right: 10px;
+    font-size: 64px;
+    opacity: 0.07;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .game-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* GAME 1: Reaction timer */
+  #reaction-area {
+    width: 100%;
+    height: 100px;
+    border-radius: 3px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    user-select: none;
+    border: 1px solid var(--border);
+  }
+
+  #reaction-area.waiting { background: var(--accent2); color: #fff; }
+  #reaction-area.go { background: #3cb371; color: #fff; }
+
+  #reaction-result {
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    min-height: 18px;
+  }
+
+  /* GAME 2: Guess the number */
+  .guess-input-row { display: flex; gap: 8px; margin-top: 12px; }
+
+  .guess-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .guess-input:focus { border-color: var(--accent); }
+
+  .guess-btn {
+    background: var(--accent);
+    color: #0d0d0f;
+    border: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .guess-btn:hover { background: #f7d060; }
+
+  #guess-feedback {
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    min-height: 18px;
+  }
+
+  .guess-attempts {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .attempt-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .attempt-dot.used { background: var(--accent2); }
+  .attempt-dot.won { background: #3cb371; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 60px 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--border);
+    margin: 80px auto;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <p class="header-eyebrow">✦ Est. 2025 &nbsp;·&nbsp; A place of wonder</p>
+  <h1 class="header-title">The<br><span>Wonder</span>box</h1>
+  <p class="header-subtitle">A little corner of the web. Part gallery, part postbox, part playground.</p>
+  <nav class="nav-dots">
+    <a href="#gallery">Gallery</a>
+    <a href="#message">Message</a>
+    <a href="#games">Games</a>
+  </nav>
+</header>
+
+<div class="divider"></div>
+
+<!-- ═══ HERO IMAGE ═══ -->
+<section id="gallery">
+  <p class="section-label">§ 01 — Gallery</p>
+  <h2 class="section-title">Featured Image</h2>
+  <div class="hero-image-wrap">
+    <img
+      src="https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=1200&q=80"
+      alt="Misty mountain landscape at dawn"
+      onerror="this.src='https://picsum.photos/1200/480?grayscale'"
+    />
+    <div class="hero-caption">
+      <h3>Where the mist meets the mountain</h3>
+      <p>Unsplash · Nature &amp; Landscape · 2025</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ MESSAGE BOX ═══ -->
+<section id="message">
+  <p class="section-label">§ 02 — Postbox</p>
+  <h2 class="section-title">Send a Message</h2>
+  <div class="message-card">
+    <textarea id="msg-input" placeholder="Say hello, share a thought, ask a question…"></textarea>
+    <br>
+    <button class="send-btn" onclick="sendMessage()">Send →</button>
+    <div class="response-box" id="response-box">
+      <p class="resp-label">Reply</p>
+      <p id="response-text"></p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ GAMES ═══ -->
+<section id="games">
+  <p class="section-label">§ 03 — Arcade</p>
+  <h2 class="section-title">A Couple of Games</h2>
+  <div class="games-grid">
+
+    <!-- Game 1: Reaction Timer -->
+    <div class="game-card" data-emoji="⚡">
+      <p class="game-title">Reaction Timer</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Wait for green, then click as fast as you can!</p>
+      <div id="reaction-area" onclick="reactionClick()">Click to start</div>
+      <p id="reaction-result"></p>
+    </div>
+
+    <!-- Game 2: Guess the Number -->
+    <div class="game-card" data-emoji="🎯">
+      <p class="game-title">Number Guesser</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:4px;">I'm thinking of a number from 1 – 100. You have 7 tries.</p>
+      <div class="guess-input-row">
+        <input class="guess-input" type="number" id="guess-input" min="1" max="100" placeholder="Your guess…" onkeydown="if(event.key==='Enter') checkGuess()">
+        <button class="guess-btn" onclick="checkGuess()">Guess</button>
+      </div>
+      <p id="guess-feedback"></p>
+      <div class="guess-attempts" id="guess-attempts"></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<footer>The Wonderbox &nbsp;·&nbsp; Made with curiosity &nbsp;·&nbsp; No data stored</footer>
+
+<script>
+// ─── MESSAGE BOX ───
+const replies = [
+  "Thanks for reaching out — your words landed somewhere good. ✦",
+  "Received! Consider this a warm nod from across the internet.",
+  "Message noted. We'll hold onto that thought forever (or at least until the page refreshes).",
+  "A lovely thing to send. The Wonderbox appreciates it.",
+  "Beautifully said. The void whispers back: hello.",
+  "Got it! Your message has been ceremoniously accepted and gently forgotten. 🌿",
+];
+
+function sendMessage() {
+  const input = document.getElementById('msg-input');
+  const box = document.getElementById('response-box');
+  const text = document.getElementById('response-text');
+  if (!input.value.trim()) return;
+  const r = replies[Math.floor(Math.random() * replies.length)];
+  text.textContent = r;
+  box.classList.add('visible');
+  input.value = '';
+}
+
+// ─── REACTION TIMER ───
+let reactionState = 'idle'; // idle | waiting | ready
+let reactionTimeout;
+let reactionStart;
+
+function reactionClick() {
+  const area = document.getElementById('reaction-area');
+  const result = document.getElementById('reaction-result');
+
+  if (reactionState === 'idle') {
+    reactionState = 'waiting';
+    area.textContent = 'Wait for it…';
+    area.className = 'waiting';
+    result.textContent = '';
+    const delay = 1500 + Math.random() * 3000;
+    reactionTimeout = setTimeout(() => {
+      area.textContent = 'CLICK NOW!';
+      area.className = 'go';
+      reactionState = 'ready';
+      reactionStart = Date.now();
+    }, delay);
+
+  } else if (reactionState === 'waiting') {
+    clearTimeout(reactionTimeout);
+    area.textContent = 'Too early! Click to try again.';
+    area.className = '';
+    result.textContent = '⚠ Jumped the gun!';
+    reactionState = 'idle';
+
+  } else if (reactionState === 'ready') {
+    const ms = Date.now() - reactionStart;
+    area.textContent = 'Click to play again';
+    area.className = '';
+    reactionState = 'idle';
+    let rating = ms < 200 ? '🔥 Inhuman!' : ms < 280 ? '⚡ Lightning fast!' : ms < 350 ? '✅ Solid!' : ms < 450 ? '👍 Not bad.' : '🐢 Slow poke.';
+    result.textContent = `${ms} ms — ${rating}`;
+  }
+}
+
+// ─── GUESS THE NUMBER ───
+let secretNumber = Math.floor(Math.random() * 100) + 1;
+let guessesLeft = 7;
+let gameOver = false;
+
+function renderDots() {
+  const wrap = document.getElementById('guess-attempts');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const d = document.createElement('div');
+    d.className = 'attempt-dot' + (i >= guessesLeft ? (gameOver && guessesLeft === 0 ? ' used' : ' used') : '');
+    wrap.appendChild(d);
+  }
+}
+
+renderDots();
+
+function checkGuess() {
+  if (gameOver) return;
+  const input = document.getElementById('guess-input');
+  const fb = document.getElementById('guess-feedback');
+  const val = parseInt(input.value);
+  if (!val || val < 1 || val > 100) { fb.textContent = 'Enter a number between 1 and 100.'; return; }
+
+  guessesLeft--;
+  renderDots();
+
+  if (val === secretNumber) {
+    fb.textContent = `🎉 Yes! It was ${secretNumber}! You got it in ${7 - guessesLeft} guess${7-guessesLeft!==1?'es':''}!`;
+    document.querySelectorAll('.attempt-dot.used').forEach(d => d.classList.add('won'));
+    gameOver = true;
+    input.disabled = true;
+    setTimeout(resetGuess, 3000);
+  } else if (guessesLeft === 0) {
+    fb.textContent = `❌ Out of guesses! It was ${secretNumber}. Restarting…`;
+    gameOver = true;
+    input.disabled = true;
+    setTimeout(resetGuess, 2500);
+  } else {
+    const hint = val < secretNumber ? '📈 Too low!' : '📉 Too high!';
+    fb.textContent = `${hint} — ${guessesLeft} guess${guessesLeft!==1?'es':''} left.`;
+  }
+  input.value = '';
+}
+
+function resetGuess() {
+  secretNumber = Math.floor(Math.random() * 100) + 1;
+  guessesLeft = 7;
+  gameOver = false;
+  document.getElementById('guess-input').disabled = false;
+  document.getElementById('guess-feedback').textContent = 'New game! Guess again.';
+  renderDots();
+}
+</script>
+</body>
+</html>
