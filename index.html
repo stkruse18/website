@@ -3,10 +3,32 @@
   <head>
     <title>Hey</title>
   </head>
+
   <body>
     <h1>Hello</h1>
-    <p>Welcome to my website! Feel free to stay for a mintue and check out Stephen Royale!</p>
+    <p>
+      Welcome to my website! Feel free to stay for a minute and check out Stephen Royale!
+    </p>
 
     <img src="CCCBB6AE-70AF-44EC-A67C-2D3BDC04FFBC.PNG" alt="My image" width="500">
+
+    <hr>
+
+    <h3>Leave a message</h3>
+
+    <input id="inputBox" type="text" placeholder="Text Me!" />
+    <button onclick="respond()">Send</button>
+
+    <p id="response"></p>
+
+    <script>
+      function respond() {
+        let input = document.getElementById("inputBox").value;
+
+        document.getElementById("response").innerText =
+          "Stephen Said: Lol that was really funny I almost cared";
+      }
+    </script>
+
   </body>
 </html>
